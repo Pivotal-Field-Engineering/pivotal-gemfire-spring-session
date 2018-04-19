@@ -15,28 +15,71 @@
 
 package pivotal.field.example.gemfirehttpsession;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.geode.cache.client.ClientCache;
+import org.apache.geode.cache.client.ClientCacheFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.gemfire.config.annotation.ClientCacheApplication;
-import org.springframework.data.gemfire.config.annotation.EnablePool;
+import org.springframework.boot.json.JsonParser;
+import org.springframework.boot.json.JsonParserFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
+import org.springframework.data.gemfire.support.ConnectionEndpoint;
 import org.springframework.session.data.gemfire.config.annotation.web.http.EnableGemFireHttpSession;
+import org.springframework.session.data.gemfire.serialization.pdx.provider.PdxSerializableSessionSerializer;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@ClientCacheApplication
-@EnablePool(name = "gemfirePool")
-@EnableGemFireHttpSession(poolName = "gemfirePool",
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+@EnableGemFireHttpSession(poolName = "DEFAULT",
         regionName = "test",
         maxInactiveIntervalInSeconds = 180
 )
 @SpringBootApplication
 public class GemfireHttpsessionApplication {
 
-    public static void main(String[] args) {
+
+    @Autowired
+    private Environment env;
+
+    public static void main(String[] args) throws IOException {
+
         SpringApplication.run(GemfireHttpsessionApplication.class, args);
     }
 
     @RequestMapping("/*")
     public String home() {
         return "index";
+    }
+
+    @Bean
+    public ClientCache gemfireCache(@Value("${app.gemfire.locators:localhost[10334]") String locators) throws IOException {
+
+        ClientCacheFactory factory = new ClientCacheFactory();
+        if (env.acceptsProfiles("cloud")) {
+            final JsonParser parser = JsonParserFactory.getJsonParser();
+            Map services = new ObjectMapper().readValue(System.getenv("VCAP_SERVICES"), Map.class);
+            Map credentials = (Map) ((Map) ((List) services.get("p-cloudcache")).get(0)).get("credentials");
+            ClientAuthInitialize.setVCapServices(credentials);
+            addLocators(factory, (List<String>) credentials.get("locators"));
+        } else {
+            addLocators(factory, Arrays.asList(locators.split(",")));
+        }
+        factory.setPoolSubscriptionEnabled(true);
+        factory.setPdxSerializer(new PdxSerializableSessionSerializer());
+
+        return factory.create();
+    }
+
+    private void addLocators(ClientCacheFactory clientCacheFactory, List<String> locators) {
+        locators.forEach(it -> {
+            ConnectionEndpoint endpoint = ConnectionEndpoint.parse(it);
+            clientCacheFactory.addPoolLocator(endpoint.getHost(), endpoint.getPort());
+        });
     }
 }

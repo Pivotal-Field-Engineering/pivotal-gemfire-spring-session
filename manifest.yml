@@ -1,0 +1,6 @@
+---
+applications:
+- name: pivotal-gemfire-spring-session
+  memory: 1G
+  random-route: true
+  path: build/libs/pivotal-gemfire-spring-session-0.0.1-SNAPSHOT.war

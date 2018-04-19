@@ -17,6 +17,7 @@ ext {
 }
 
 apply plugin: 'java'
+apply plugin: 'war'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
@@ -25,14 +26,14 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
-    mavenCentral()
-    maven { url 'https://repo.spring.io/libs-release' }
+
     maven { url 'https://repo.spring.io/libs-milestone' }
+    maven { url 'https://repo.spring.io/libs-release' }
+    mavenCentral()
 }
 
 
 dependencies {
-   // compile 'io.pivotal.spring.cloud:spring-cloud-gemfire-spring-connector:1.2.0.RELEASE'
     compile 'org.springframework.data:spring-data-gemfire:2.1.0.M2'
     compile('org.springframework.session:spring-session-data-gemfire:2.0.2.RELEASE')
     compile "io.pivotal.gemfire:geode-core:$gemfireVersion"
@@ -45,4 +46,8 @@ dependencies {
 
 configurations {
     compile.exclude(group: 'org.apache.logging.log4j', module: 'log4j-to-slf4j')
+}
+
+war {
+    enabled = true
 }
