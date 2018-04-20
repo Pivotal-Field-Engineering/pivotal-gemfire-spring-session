@@ -1,4 +1,4 @@
-#Spring Session State Caching for Pivotal GemFire
+# Spring Session State Caching for Pivotal GemFire
 
 In this example we will explore some code that allow session state to be stored in GemFire.  Some reasons for externalizing the session state to some database like GemFire is to allow:
 
