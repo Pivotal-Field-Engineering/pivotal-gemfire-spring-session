@@ -17,37 +17,68 @@ ext {
 }
 
 apply plugin: 'java'
-apply plugin: 'war'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
-
 group = 'pivotal.field.example'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
-repositories {
 
-    maven { url 'https://repo.spring.io/libs-milestone' }
-    maven { url 'https://repo.spring.io/libs-release' }
-    mavenCentral()
+
+
+subprojects {
+    group = 'pivotal.field.example'
+    version = '0.0.1-SNAPSHOT'
+    sourceCompatibility = 1.8
+
+    apply plugin: 'java'
+
+
+    repositories {
+
+        maven { url 'https://repo.spring.io/libs-milestone' }
+        maven { url 'https://repo.spring.io/libs-release' }
+        mavenCentral()
+    }
+
+    dependencies {
+        compile 'org.springframework.data:spring-data-gemfire:2.1.0.M2'
+        compile('org.springframework.session:spring-session-data-gemfire:2.0.2.RELEASE')
+        compile "io.pivotal.gemfire:geode-core:$gemfireVersion"
+
+
+    }
+    configurations {
+        compile.exclude(group: 'org.apache.logging.log4j', module: 'log4j-to-slf4j')
+    }
 }
 
+project(':gemfire-session-jsp') {
+    apply plugin: 'war'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
 
-dependencies {
-    compile 'org.springframework.data:spring-data-gemfire:2.1.0.M2'
-    compile('org.springframework.session:spring-session-data-gemfire:2.0.2.RELEASE')
-    compile "io.pivotal.gemfire:geode-core:$gemfireVersion"
+    war {
+        enabled = true
+    }
 
-    compile('org.springframework.boot:spring-boot-starter-web')
-    runtime('org.apache.tomcat.embed:tomcat-embed-jasper')
-    runtime('javax.servlet:jstl')
-    testCompile('org.springframework.boot:spring-boot-starter-test')
+    dependencies {
+        compile project(':gemfire-session-common')
+        compile('org.springframework.boot:spring-boot-starter-web')
+        runtime('org.apache.tomcat.embed:tomcat-embed-jasper')
+        runtime('javax.servlet:jstl')
+        testCompile('org.springframework.boot:spring-boot-starter-test')
+    }
+}
+project(':gemfire-session-rest') {
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    dependencies {
+        compile project(':gemfire-session-common')
+        compile('org.springframework.boot:spring-boot-starter-web')
+        testCompile('org.springframework.boot:spring-boot-starter-test')
+    }
+
 }
 
-configurations {
-    compile.exclude(group: 'org.apache.logging.log4j', module: 'log4j-to-slf4j')
-}
-
-war {
-    enabled = true
+project(':gemfire-session-common') {
 }

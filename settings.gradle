@@ -1,1 +1,3 @@
 rootProject.name = 'pivotal-gemfire-spring-session'
+
+include 'gemfire-session-jsp', 'gemfire-session-rest', 'gemfire-session-common'

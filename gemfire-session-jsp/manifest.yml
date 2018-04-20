@@ -1,0 +1,8 @@
+---
+applications:
+- name: gemfire-spring-session-jsp
+  memory: 1G
+  random-route: true
+  path: build/libs/gemfire-session-jsp-0.0.1-SNAPSHOT.war
+  services:
+  - mypcc
