@@ -184,11 +184,11 @@ Above is after visiting the page twice.
 
 Now that we are "logged in" through the JSP page and have established a session we can reuse the session id as the token that we pass to other services.   For the REST service we deployed it is looking for the session information to be in the ``X-Auth-Token`` header.   We can emulate a rest call using ``curl`` using the above session key that we cut-n-pasted.
 
-**Request:**
+** Request: **
 ```
 voltron:gemfire-session-rest cblack$ curl https://gemfire-spring-session-rest-alchemic-tangle.pcfbeta.io/home -H "X-Auth-Token:4b0b8c28-1e32-46b6-a7e8-621e0a5ae9a1"
 ```
-**Response:** Here the rest service converts the session object ``user_object`` to JSON and returns that value
+** Response: ** Here the rest service converts the session object ``user_object`` to JSON and returns that value
 ```
 {
   "name" : "SomeFirstName",
@@ -257,8 +257,12 @@ Emulate the user interacting with the application:
 
 Emulate the application calling the rest service.
 
+** Request **
 ```
 voltron:gemfire-session-jsp cblack$ curl http://localhost:9090/home -H "X-Auth-Token:e4dfc919-e47c-463c-ac90-1c7743e51d47"
+```
+** Response **
+```
 {
   "name" : "SomeFirstName",
   "lastName" : "SomeLastName",
