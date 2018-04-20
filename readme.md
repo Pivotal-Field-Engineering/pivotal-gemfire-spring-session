@@ -90,7 +90,7 @@ After creating the service instance we need to create a service key so applicati
 
 ```bash
 voltron:gemfire-session-jsp cblack$ cf create-service-key mypcc mypcc-key
-Creating service key mypcc-key for service instance mypcc as cblack@pivotal.io...
+Creating service key mypcc-key for service instance mypcc as charlie...
 OK
 ```
 
@@ -164,7 +164,7 @@ With the tracking we can see that the JSP page and the REST applications have to
 For this we look at the ``routes`` that PCF created.   In the manifest I asked PCF to create random routes so your application may be different.
 ```
 voltron:gemfire-session-rest cblack$ cf routes
-Getting routes for org pivot-cblack / space development as cblack@pivotal.io ...
+Getting routes for org pivot-cblack / space development as charlie ...
 
 space         host                                                        domain       port   path   type   apps                          service
 development   gemfire-spring-session-jsp-nonchromosomal-tariff            pcfbeta.io                        gemfire-spring-session-jsp
